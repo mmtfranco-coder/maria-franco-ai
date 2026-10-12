@@ -6,24 +6,24 @@
 <title>Maria Franco Arte AI</title>
 
 <style>
+
 body{
     font-family: Arial, sans-serif;
-    background:#f5f5f5;
-    margin:0;
-    padding:40px;
+    max-width:1000px;
+    margin:40px auto;
+    padding:20px;
+    background:#f4f4f4;
 }
 
 .card{
-    max-width:1000px;
-    margin:auto;
     background:white;
-    padding:30px;
-    border-radius:15px;
-    box-shadow:0 2px 10px rgba(0,0,0,.1);
+    padding:25px;
+    border-radius:12px;
+    box-shadow:0 0 15px rgba(0,0,0,0.1);
 }
 
 h1{
-    color:#7b5678;
+    color:#7a5071;
 }
 
 label{
@@ -35,29 +35,84 @@ label{
 select{
     width:100%;
     padding:10px;
-    margin-top:5px;
+}
+
+.cores{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:8px;
+    margin-top:10px;
+}
+
+.cor{
+    background:#f5f5f5;
+    padding:10px;
+    border-radius:6px;
+}
+
+.botoes{
+    display:flex;
+    gap:12px;
+    margin-top:25px;
+}
+
+.botoes button{
+    flex:1;
+    margin-top:0;
 }
 
 button{
-    margin-top:25px;
-    padding:12px 20px;
-    border:none;
-    border-radius:6px;
-    background:#7b5678;
+    padding:15px;
+    background:#7a5071;
     color:white;
+    border:none;
+    border-radius:8px;
     cursor:pointer;
+    font-size:18px;
 }
 
 button:hover{
-    background:#654563;
+    background:#603d59;
+}
+
+#loading{
+    display:none;
+    margin-top:20px;
+    font-weight:bold;
 }
 
 #resultado{
-    margin-top:30px;
+    display:none;
+    margin-top:20px;
     padding:20px;
     background:#f0f0f0;
-    border-radius:10px;
+    border-radius:8px;
+    white-space:pre-wrap;
 }
+
+#resultadoImagem{
+    display:none;
+    margin-top:20px;
+    padding:20px;
+    background:#ffffff;
+    border-radius:8px;
+    border:1px solid #ddd;
+}
+
+#imagemGerada{
+    display:none;
+    width:100%;
+    max-width:700px;
+    margin:auto;
+    border-radius:8px;
+}
+
+#promptImagem{
+    margin-top:15px;
+    white-space:pre-wrap;
+    color:#444;
+}
+
 </style>
 </head>
 
@@ -68,85 +123,250 @@ button:hover{
 <h1>Maria Franco Arte AI</h1>
 
 <label>Tipo de Vidro</label>
-<select id="vidro"></select>
+<select id="vidro">
+<option>Jarra</option>
+<option>Copo</option>
+<option>Xícara</option>
+<option>Boleira</option>
+<option>Queijeira</option>
+</select>
 
 <label>Flor Principal</label>
-<select id="flor"></select>
+<select id="flor">
+<option>Girassol</option>
+<option>Lírio</option>
+<option>Lavanda</option>
+<option>Orquídea</option>
+</select>
 
 <label>Montagem</label>
-<select id="montagem"></select>
+<select id="montagem">
+<option>Espaçada</option>
+<option>Média</option>
+<option>Cheia</option>
+</select>
 
-<label>Cores (CTRL + clique para selecionar várias)</label>
-<select id="cores" multiple size="8"></select>
+<label>Cores</label>
 
-<button onclick="gerarIdeia()">Gerar Ideia</button>
+<div class="cores">
 
-<div id="resultado">
-Selecione as opções e clique em "Gerar Ideia".
+<div class="cor"><input type="checkbox" value="Branco"> Branco</div>
+<div class="cor"><input type="checkbox" value="Amarelo"> Amarelo</div>
+<div class="cor"><input type="checkbox" value="Laranja"> Laranja</div>
+<div class="cor"><input type="checkbox" value="Vermelho"> Vermelho</div>
+<div class="cor"><input type="checkbox" value="Rosa"> Rosa</div>
+<div class="cor"><input type="checkbox" value="Lilás"> Lilás</div>
+<div class="cor"><input type="checkbox" value="Roxo"> Roxo</div>
+<div class="cor"><input type="checkbox" value="Azul"> Azul</div>
+<div class="cor"><input type="checkbox" value="Verde"> Verde</div>
+<div class="cor"><input type="checkbox" value="Marrom"> Marrom</div>
+
+</div>
+
+<div class="botoes">
+
+<button id="btnGerarTexto">
+Gerar Ideia com IA
+</button>
+
+<button id="btnGerarImagem">
+Gerar Imagem com IA
+</button>
+
+</div>
+
+<div id="loading">
+Consultando IA...
+</div>
+
+<div id="resultado"></div>
+
+<div id="resultadoImagem">
+
+<h2>Visualização da Peça</h2>
+
+<img
+id="imagemGerada"
+alt="Imagem Gerada">
+
+<div id="promptImagem"></div>
+
 </div>
 
 </div>
 
 <script>
 
-fetch('database.json')
-.then(response => response.json())
-.then(data => {
+const WORKER_URL =
+"https://maria-franco-ai-worker.mmt-franco.workers.dev";
 
-    preencher('vidro', data.vidros);
-    preencher('flor', data.flores);
-    preencher('montagem', data.montagens);
-    preencher('cores', data.cores);
+function obterDadosFormulario(){
+
+    return {
+
+        vidro:
+            document.getElementById("vidro").value,
+
+        flor:
+            document.getElementById("flor").value,
+
+        montagem:
+            document.getElementById("montagem").value,
+
+        cores:
+            Array.from(
+                document.querySelectorAll(
+                    'input[type="checkbox"]:checked'
+                )
+            ).map(c => c.value)
+
+    };
+
+}
+
+document
+.getElementById("btnGerarTexto")
+.addEventListener("click", async function(){
+
+    const dados =
+        obterDadosFormulario();
+
+    const prompt = `
+Crie uma proposta criativa de pintura artesanal em vidro.
+
+Tipo de peça:
+${dados.vidro}
+
+Flor principal:
+${dados.flor}
+
+Montagem:
+${dados.montagem}
+
+Paleta:
+${dados.cores.join(", ")}
+
+Descreva detalhadamente como ficaria a pintura, a distribuição dos elementos, equilíbrio visual, estilo decorativo e sugestões artísticas para execução manual em vidro e cristal.
+
+A resposta deve ser inspiradora para um artista do universo Maria Franco Arte.
+`;
+
+    document.getElementById("loading").style.display =
+        "block";
+
+    document.getElementById("resultado").style.display =
+        "none";
+
+    try {
+
+        const response =
+            await fetch(
+                WORKER_URL + "/generate-text",
+                {
+                    method:"POST",
+                    headers:{
+                        "Content-Type":"application/json"
+                    },
+                    body:JSON.stringify({
+                        prompt:prompt
+                    })
+                }
+            );
+
+        const data =
+            await response.json();
+
+        document.getElementById("loading").style.display =
+            "none";
+
+        document.getElementById("resultado").style.display =
+            "block";
+
+        document.getElementById("resultado").innerText =
+            data.resposta;
+
+    }
+    catch(err){
+
+        document.getElementById("loading").style.display =
+            "none";
+
+        document.getElementById("resultado").style.display =
+            "block";
+
+        document.getElementById("resultado").innerText =
+            err.message;
+
+    }
 
 });
 
-function preencher(id, lista){
+document
+.getElementById("btnGerarImagem")
+.addEventListener("click", async function(){
 
-    const select = document.getElementById(id);
+    const dados =
+        obterDadosFormulario();
 
-    lista.forEach(item => {
+    document.getElementById("loading").style.display =
+        "block";
 
-        const option = document.createElement('option');
+    document.getElementById("resultadoImagem").style.display =
+        "none";
 
-        option.value = item.id;
-        option.textContent = item.nome;
+    try {
 
-        select.appendChild(option);
+        const response =
+            await fetch(
+                WORKER_URL + "/generate-image",
+                {
+                    method:"POST",
+                    headers:{
+                        "Content-Type":"application/json"
+                    },
+                    body:JSON.stringify(dados)
+                }
+            );
 
-    });
+        const data =
+            await response.json();
 
-}
+        document.getElementById("loading").style.display =
+            "none";
 
-function gerarIdeia(){
+        document.getElementById("resultadoImagem").style.display =
+            "block";
 
-    const vidro =
-        document.getElementById('vidro').selectedOptions[0].text;
+        if(data.imageUrl){
 
-    const flor =
-        document.getElementById('flor').selectedOptions[0].text;
+            document.getElementById("imagemGerada").style.display =
+                "block";
 
-    const montagem =
-        document.getElementById('montagem').selectedOptions[0].text;
+            document.getElementById("imagemGerada").src =
+                data.imageUrl;
 
-    const cores =
-        Array.from(
-            document.getElementById('cores').selectedOptions
-        )
-        .map(item => item.text);
+        }
 
-    document.getElementById('resultado').innerHTML = `
-        <h3>Sugestão Selecionada</h3>
+        document.getElementById("promptImagem").innerText =
+            data.imagePrompt ||
+            data.message ||
+            "Prompt visual preparado.";
 
-        <p><strong>Vidro:</strong> ${vidro}</p>
+    }
+    catch(err){
 
-        <p><strong>Flor:</strong> ${flor}</p>
+        document.getElementById("loading").style.display =
+            "none";
 
-        <p><strong>Montagem:</strong> ${montagem}</p>
+        document.getElementById("resultadoImagem").style.display =
+            "block";
 
-        <p><strong>Cores:</strong> ${cores.join(', ')}</p>
-    `;
+        document.getElementById("promptImagem").innerText =
+            err.message;
 
-}
+    }
+
+});
 
 </script>
 
