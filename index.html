@@ -58,7 +58,6 @@ select{
 
 .botoes button{
     flex:1;
-    margin-top:0;
 }
 
 button{
@@ -94,15 +93,15 @@ button:hover{
     display:none;
     margin-top:20px;
     padding:20px;
-    background:#ffffff;
+    background:white;
     border-radius:8px;
     border:1px solid #ddd;
 }
 
 #imagemGerada{
-    display:none;
     width:100%;
-    max-width:700px;
+    max-width:800px;
+    display:none;
     margin:auto;
     border-radius:8px;
 }
@@ -110,7 +109,6 @@ button:hover{
 #promptImagem{
     margin-top:15px;
     white-space:pre-wrap;
-    color:#444;
 }
 
 </style>
@@ -224,6 +222,10 @@ function obterDadosFormulario(){
 
 }
 
+// ===========================================
+// TEXTO
+// ===========================================
+
 document
 .getElementById("btnGerarTexto")
 .addEventListener("click", async function(){
@@ -246,16 +248,11 @@ ${dados.montagem}
 Paleta:
 ${dados.cores.join(", ")}
 
-Descreva detalhadamente como ficaria a pintura, a distribuição dos elementos, equilíbrio visual, estilo decorativo e sugestões artísticas para execução manual em vidro e cristal.
-
-A resposta deve ser inspiradora para um artista do universo Maria Franco Arte.
+Descreva detalhadamente como ficaria a pintura.
 `;
 
     document.getElementById("loading").style.display =
         "block";
-
-    document.getElementById("resultado").style.display =
-        "none";
 
     try {
 
@@ -268,7 +265,7 @@ A resposta deve ser inspiradora para um artista do universo Maria Franco Arte.
                         "Content-Type":"application/json"
                     },
                     body:JSON.stringify({
-                        prompt:prompt
+                        prompt
                     })
                 }
             );
@@ -300,6 +297,10 @@ A resposta deve ser inspiradora para um artista do universo Maria Franco Arte.
     }
 
 });
+
+// ===========================================
+// IMAGEM
+// ===========================================
 
 document
 .getElementById("btnGerarImagem")
@@ -337,7 +338,7 @@ document
         document.getElementById("resultadoImagem").style.display =
             "block";
 
-        if(data.imageUrl){
+        if(data.sucesso && data.imageUrl){
 
             document.getElementById("imagemGerada").style.display =
                 "block";
@@ -345,10 +346,16 @@ document
             document.getElementById("imagemGerada").src =
                 data.imageUrl;
 
+            document.getElementById("promptImagem").innerText =
+                "";
+
         }
+        else{
 
             document.getElementById("promptImagem").innerText =
-            JSON.stringify(data, null, 2);
+                JSON.stringify(data,null,2);
+
+        }
 
     }
     catch(err){
