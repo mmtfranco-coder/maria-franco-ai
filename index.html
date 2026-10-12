@@ -3,102 +3,186 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>Maria Franco Arte - Gerador de Ideias</title>
 
 <style>
-
-body{
-    font-family: Arial, Helvetica, sans-serif;
+body {
+    font-family: Arial, sans-serif;
     max-width: 900px;
     margin: 40px auto;
     padding: 20px;
-    background:#fafafa;
+    background: #fafafa;
 }
 
-.card{
-    background:white;
-    padding:20px;
-    border-radius:10px;
-    box-shadow:0 0 10px rgba(0,0,0,0.10);
+.card {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
 }
 
-h1{
-    color:#7a5071;
+h1 {
+    color: #7a5071;
 }
 
-label{
-    display:block;
-    margin-top:15px;
-    font-weight:bold;
+label {
+    display: block;
+    margin-top: 15px;
+    font-weight: bold;
 }
 
-select{
-    width:100%;
-    padding:10px;
-    margin-top:5px;
+select {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
 }
 
-button{
-    margin-top:20px;
-    background:#7a5071;
-    color:white;
-    border:none;
-    padding:12px 20px;
-    border-radius:5px;
-    cursor:pointer;
+button {
+    margin-top: 20px;
+    background: #7a5071;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 5px;
+    cursor: pointer;
 }
 
-button:hover{
-    background:#603d59;
+button:hover {
+    background: #603d59;
 }
 
-#resultado{
-    margin-top:30px;
-    padding:20px;
-    background:#f5f5f5;
-    border-radius:8px;
-    display:none;
-    white-space:pre-wrap;
+#resultado {
+    margin-top: 20px;
+    padding: 20px;
+    background: #f5f5f5;
+    border-radius: 8px;
+    display: none;
 }
-
-.erro{
-    color:red;
-    font-weight:bold;
-}
-
 </style>
-</head>
 
+</head>
 <body>
 
 <div class="card">
 
-    <h1>Maria Franco Arte</h1>
+<h1>Maria Franco Arte</h1>
 
-    <p>
-        Gerador de ideias para pintura em vidro.
-    </p>
+<p>
+Gerador de ideias para pintura em vidro.
+</p>
 
-    <label>Tipo de Vidro</label>
-    <select id="vidro">
-        <option>Carregando...</option>
-    </select>
+<label>Tipo de Vidro</label>
+<select id="vidro">
+    <option>Carregando...</option>
+</select>
 
-    <label>Flor Principal</label>
-    <select id="flor">
-        <option>Carregando...</option>
-    </select>
+<label>Flor Principal</label>
+<select id="flor">
+    <option>Carregando...</option>
+</select>
 
-    <label>Montagem</label>
-    <select id="montagem">
-        <option>Carregando...</option>
-    </select>
+<label>Montagem</label>
+<select id="montagem">
+    <option>Carregando...</option>
+</select>
 
-    <label>Cores (selecione até 5)</label>
-    <select id="cores" multiple size="10">
-    </select>
+<label>Cores</label>
+<select id="cores" multiple size="10">
+</select>
 
-    <button onclick="gerarIdeia()">Gerar Ideia</button>
+<button onclick="gerarIdeia()">Gerar Ideia</button>
 
-    <div id="
+<div id="resultado"></div>
+
+</div>
+
+<script>
+
+function preencherSelect(id, lista) {
+
+    const select = document.getElementById(id);
+
+    select.innerHTML = "";
+
+    lista.forEach(function(item){
+
+        const option = document.createElement("option");
+
+        option.value = item.id;
+        option.textContent = item.nome;
+
+        select.appendChild(option);
+
+    });
+
+}
+
+fetch("database.json")
+.then(function(response){
+
+    return response.json();
+
+})
+.then(function(data){
+
+    console.log("Database carregado:");
+    console.log(data);
+
+    preencherSelect("vidro", data.vidros);
+    preencherSelect("flor", data.flores);
+    preencherSelect("montagem", data.montagens);
+    preencherSelect("cores", data.cores);
+
+})
+.catch(function(error){
+
+    console.error(error);
+
+    alert("Erro ao carregar database.json");
+
+});
+
+function gerarIdeia(){
+
+    const vidro =
+        document.getElementById("vidro").value;
+
+    const flor =
+        document.getElementById("flor").value;
+
+    const montagem =
+        document.getElementById("montagem").value;
+
+    const cores =
+        Array.from(
+            document.getElementById("cores").selectedOptions
+        ).map(function(o){
+            return o.value;
+        });
+
+    const prompt =
+`
+Vidro: ${vidro}
+Flor: ${flor}
+Montagem: ${montagem}
+Cores: ${cores.join(", ")}
+
+Crie uma proposta de pintura artesanal em vidro
+seguindo os dados acima.
+`;
+
+    document.getElementById("resultado").style.display = "block";
+
+    document.getElementById("resultado").innerHTML =
+        "<h3>Prompt Gerado</h3><pre>" +
+        prompt +
+        "</pre>";
+
+    console.log(prompt);
+
+}
+
+</script>
+
+</body>
+</html>
