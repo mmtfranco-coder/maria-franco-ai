@@ -347,10 +347,8 @@ document
 
         }
 
-        document.getElementById("promptImagem").innerText =
-            data.imagePrompt ||
-            data.message ||
-            "Prompt visual preparado.";
+            document.getElementById("promptImagem").innerText =
+            JSON.stringify(data, null, 2);
 
     }
     catch(err){
