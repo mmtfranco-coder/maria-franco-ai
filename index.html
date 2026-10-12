@@ -6,24 +6,24 @@
 <title>Maria Franco Arte AI</title>
 
 <style>
-
 body{
     font-family: Arial, sans-serif;
-    max-width:1000px;
-    margin:40px auto;
-    padding:20px;
-    background:#f4f4f4;
+    background:#f5f5f5;
+    margin:0;
+    padding:40px;
 }
 
 .card{
+    max-width:1000px;
+    margin:auto;
     background:white;
-    padding:25px;
-    border-radius:12px;
-    box-shadow:0 0 15px rgba(0,0,0,0.1);
+    padding:30px;
+    border-radius:15px;
+    box-shadow:0 2px 10px rgba(0,0,0,.1);
 }
 
 h1{
-    color:#7a5071;
+    color:#7b5678;
 }
 
 label{
@@ -35,51 +35,29 @@ label{
 select{
     width:100%;
     padding:10px;
-}
-
-.cores{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:8px;
-    margin-top:10px;
-}
-
-.cor{
-    background:#f5f5f5;
-    padding:10px;
-    border-radius:6px;
+    margin-top:5px;
 }
 
 button{
-    width:100%;
     margin-top:25px;
-    padding:15px;
-    background:#7a5071;
-    color:white;
+    padding:12px 20px;
     border:none;
-    border-radius:8px;
+    border-radius:6px;
+    background:#7b5678;
+    color:white;
     cursor:pointer;
-    font-size:18px;
 }
 
 button:hover{
-    background:#603d59;
-}
-
-#loading{
-    display:none;
-    margin-top:20px;
+    background:#654563;
 }
 
 #resultado{
-    display:none;
-    margin-top:20px;
+    margin-top:30px;
     padding:20px;
     background:#f0f0f0;
-    border-radius:8px;
-    white-space:pre-wrap;
+    border-radius:10px;
 }
-
 </style>
 </head>
 
@@ -90,151 +68,85 @@ button:hover{
 <h1>Maria Franco Arte AI</h1>
 
 <label>Tipo de Vidro</label>
-<select id="vidro">
-<option>Jarra</option>
-<option>Copo</option>
-<option>Xícara</option>
-<option>Boleira</option>
-<option>Queijeira</option>
-</select>
+<select id="vidro"></select>
 
 <label>Flor Principal</label>
-<select id="flor">
-<option>Girassol</option>
-<option>Lírio</option>
-<option>Lavanda</option>
-<option>Orquídea</option>
-</select>
+<select id="flor"></select>
 
 <label>Montagem</label>
-<select id="montagem">
-<option>Espaçada</option>
-<option>Média</option>
-<option>Cheia</option>
-</select>
+<select id="montagem"></select>
 
-<label>Cores</label>
+<label>Cores (CTRL + clique para selecionar várias)</label>
+<select id="cores" multiple size="8"></select>
 
-<div class="cores">
+<button onclick="gerarIdeia()">Gerar Ideia</button>
 
-<div class="cor"><input type="checkbox" value="Branco"> Branco</div>
-<div class="cor"><input type="checkbox" value="Amarelo"> Amarelo</div>
-<div class="cor"><input type="checkbox" value="Laranja"> Laranja</div>
-<div class="cor"><input type="checkbox" value="Vermelho"> Vermelho</div>
-<div class="cor"><input type="checkbox" value="Rosa"> Rosa</div>
-<div class="cor"><input type="checkbox" value="Lilás"> Lilás</div>
-<div class="cor"><input type="checkbox" value="Roxo"> Roxo</div>
-<div class="cor"><input type="checkbox" value="Azul"> Azul</div>
-<div class="cor"><input type="checkbox" value="Verde"> Verde</div>
-<div class="cor"><input type="checkbox" value="Marrom"> Marrom</div>
-
+<div id="resultado">
+Selecione as opções e clique em "Gerar Ideia".
 </div>
-
-<button id="btnGerar">
-Gerar Ideia com IA
-</button>
-
-<div id="loading">
-Consultando Gemini...
-</div>
-
-<div id="resultado"></div>
 
 </div>
 
 <script>
 
-const WORKER_URL =
-"https://maria-franco-ai-worker.mmt-franco.workers.dev";
+fetch('database.json')
+.then(response => response.json())
+.then(data => {
 
-document
-.getElementById("btnGerar")
-.addEventListener("click", async function(){
+    preencher('vidro', data.vidros);
+    preencher('flor', data.flores);
+    preencher('montagem', data.montagens);
+    preencher('cores', data.cores);
+
+});
+
+function preencher(id, lista){
+
+    const select = document.getElementById(id);
+
+    lista.forEach(item => {
+
+        const option = document.createElement('option');
+
+        option.value = item.id;
+        option.textContent = item.nome;
+
+        select.appendChild(option);
+
+    });
+
+}
+
+function gerarIdeia(){
 
     const vidro =
-        document.getElementById("vidro").value;
+        document.getElementById('vidro').selectedOptions[0].text;
 
     const flor =
-        document.getElementById("flor").value;
+        document.getElementById('flor').selectedOptions[0].text;
 
     const montagem =
-        document.getElementById("montagem").value;
+        document.getElementById('montagem').selectedOptions[0].text;
 
     const cores =
         Array.from(
-            document.querySelectorAll(
-                'input[type="checkbox"]:checked'
-            )
-        ).map(c => c.value);
+            document.getElementById('cores').selectedOptions
+        )
+        .map(item => item.text);
 
-    const prompt = `
-Crie uma proposta criativa de pintura artesanal em vidro.
+    document.getElementById('resultado').innerHTML = `
+        <h3>Sugestão Selecionada</h3>
 
-Tipo de peça:
-${vidro}
+        <p><strong>Vidro:</strong> ${vidro}</p>
 
-Flor principal:
-${flor}
+        <p><strong>Flor:</strong> ${flor}</p>
 
-Montagem:
-${montagem}
+        <p><strong>Montagem:</strong> ${montagem}</p>
 
-Paleta:
-${cores.join(", ")}
+        <p><strong>Cores:</strong> ${cores.join(', ')}</p>
+    `;
 
-Descreva detalhadamente como ficaria a pintura, a distribuição dos elementos, equilíbrio visual, estilo decorativo e sugestões artísticas para execução manual em vidro e cristal.
-
-A resposta deve ser inspiradora para um artista do universo Maria Franco Arte.
-`;
-
-    document.getElementById("loading").style.display =
-        "block";
-
-    document.getElementById("resultado").style.display =
-        "none";
-
-    try{
-
-        const response = await fetch(
-            WORKER_URL,
-            {
-                method:"POST",
-                headers:{
-                    "Content-Type":"application/json"
-                },
-                body: JSON.stringify({
-                    prompt: prompt
-                })
-            }
-        );
-
-        const data =
-            await response.json();
-
-        document.getElementById("loading").style.display =
-            "none";
-
-        document.getElementById("resultado").style.display =
-            "block";
-
-        document.getElementById("resultado").innerText =
-            data.resposta;
-
-    }
-    catch(err){
-
-        document.getElementById("loading").style.display =
-            "none";
-
-        document.getElementById("resultado").style.display =
-            "block";
-
-        document.getElementById("resultado").innerText =
-            err.message;
-
-    }
-
-});
+}
 
 </script>
 
