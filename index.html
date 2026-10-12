@@ -92,4 +92,151 @@ button:hover{
 <label>Tipo de Vidro</label>
 <select id="vidro">
 <option>Jarra</option>
-<option>Copo</option
+<option>Copo</option>
+<option>Xícara</option>
+<option>Boleira</option>
+<option>Queijeira</option>
+</select>
+
+<label>Flor Principal</label>
+<select id="flor">
+<option>Girassol</option>
+<option>Lírio</option>
+<option>Lavanda</option>
+<option>Orquídea</option>
+</select>
+
+<label>Montagem</label>
+<select id="montagem">
+<option>Espaçada</option>
+<option>Média</option>
+<option>Cheia</option>
+</select>
+
+<label>Cores</label>
+
+<div class="cores">
+
+<div class="cor"><input type="checkbox" value="Branco"> Branco</div>
+<div class="cor"><input type="checkbox" value="Amarelo"> Amarelo</div>
+<div class="cor"><input type="checkbox" value="Laranja"> Laranja</div>
+<div class="cor"><input type="checkbox" value="Vermelho"> Vermelho</div>
+<div class="cor"><input type="checkbox" value="Rosa"> Rosa</div>
+<div class="cor"><input type="checkbox" value="Lilás"> Lilás</div>
+<div class="cor"><input type="checkbox" value="Roxo"> Roxo</div>
+<div class="cor"><input type="checkbox" value="Azul"> Azul</div>
+<div class="cor"><input type="checkbox" value="Verde"> Verde</div>
+<div class="cor"><input type="checkbox" value="Marrom"> Marrom</div>
+
+</div>
+
+<button id="btnGerar">
+Gerar Ideia com IA
+</button>
+
+<div id="loading">
+Consultando Gemini...
+</div>
+
+<div id="resultado"></div>
+
+</div>
+
+<script>
+
+const WORKER_URL =
+"https://maria-franco-ai-worker.mmt-franco.workers.dev";
+
+document
+.getElementById("btnGerar")
+.addEventListener("click", async function(){
+
+    const vidro =
+        document.getElementById("vidro").value;
+
+    const flor =
+        document.getElementById("flor").value;
+
+    const montagem =
+        document.getElementById("montagem").value;
+
+    const cores =
+        Array.from(
+            document.querySelectorAll(
+                'input[type="checkbox"]:checked'
+            )
+        ).map(c => c.value);
+
+    const prompt = `
+Crie uma proposta criativa de pintura artesanal em vidro.
+
+Tipo de peça:
+${vidro}
+
+Flor principal:
+${flor}
+
+Montagem:
+${montagem}
+
+Paleta:
+${cores.join(", ")}
+
+Descreva detalhadamente como ficaria a pintura, a distribuição dos elementos, equilíbrio visual, estilo decorativo e sugestões artísticas para execução manual em vidro e cristal.
+
+A resposta deve ser inspiradora para um artista do universo Maria Franco Arte.
+`;
+
+    document.getElementById("loading").style.display =
+        "block";
+
+    document.getElementById("resultado").style.display =
+        "none";
+
+    try{
+
+        const response = await fetch(
+            WORKER_URL,
+            {
+                method:"POST",
+                headers:{
+                    "Content-Type":"application/json"
+                },
+                body: JSON.stringify({
+                    prompt: prompt
+                })
+            }
+        );
+
+        const data =
+            await response.json();
+
+        document.getElementById("loading").style.display =
+            "none";
+
+        document.getElementById("resultado").style.display =
+            "block";
+
+        document.getElementById("resultado").innerText =
+            data.resposta;
+
+    }
+    catch(err){
+
+        document.getElementById("loading").style.display =
+            "none";
+
+        document.getElementById("resultado").style.display =
+            "block";
+
+        document.getElementById("resultado").innerText =
+            err.message;
+
+    }
+
+});
+
+</script>
+
+</body>
+</html>
