@@ -80,4 +80,176 @@ button:hover{
 
 pre{
     white-space:pre-wrap;
-    font
+    font-size:15px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="card">
+
+<h1>Maria Franco Arte</h1>
+
+<p>
+Gerador de ideias para pintura em vidro e cristal.
+</p>
+
+<label>Tipo de Vidro</label>
+
+<select id="vidro">
+    <option>Jarra</option>
+    <option>Copo</option>
+    <option>Xícara</option>
+    <option>Boleira</option>
+    <option>Queijeira</option>
+</select>
+
+<label>Flor Principal</label>
+
+<select id="flor">
+    <option>Girassol</option>
+    <option>Lírio</option>
+    <option>Lavanda</option>
+    <option>Orquídea</option>
+</select>
+
+<label>Montagem</label>
+
+<select id="montagem">
+    <option>Espaçada</option>
+    <option>Média</option>
+    <option>Cheia</option>
+</select>
+
+<label>Cores (até 5)</label>
+
+<div class="cores-container">
+
+<div class="cor">
+<input type="checkbox" value="Branco"> Branco
+</div>
+
+<div class="cor">
+<input type="checkbox" value="Amarelo"> Amarelo
+</div>
+
+<div class="cor">
+<input type="checkbox" value="Laranja"> Laranja
+</div>
+
+<div class="cor">
+<input type="checkbox" value="Vermelho"> Vermelho
+</div>
+
+<div class="cor">
+<input type="checkbox" value="Rosa"> Rosa
+</div>
+
+<div class="cor">
+<input type="checkbox" value="Lilás"> Lilás
+</div>
+
+<div class="cor">
+<input type="checkbox" value="Roxo"> Roxo
+</div>
+
+<div class="cor">
+<input type="checkbox" value="Azul"> Azul
+</div>
+
+<div class="cor">
+<input type="checkbox" value="Verde"> Verde
+</div>
+
+<div class="cor">
+<input type="checkbox" value="Marrom"> Marrom
+</div>
+
+</div>
+
+<button id="btnGerar">
+Gerar Ideia
+</button>
+
+<div id="resultado"></div>
+
+</div>
+
+<script>
+
+document.getElementById("btnGerar")
+.addEventListener("click", function(){
+
+    const vidro =
+        document.getElementById("vidro").value;
+
+    const flor =
+        document.getElementById("flor").value;
+
+    const montagem =
+        document.getElementById("montagem").value;
+
+    const coresSelecionadas =
+        Array.from(
+            document.querySelectorAll(
+                'input[type="checkbox"]:checked'
+            )
+        );
+
+    if(coresSelecionadas.length === 0){
+
+        alert("Selecione pelo menos uma cor.");
+
+        return;
+    }
+
+    if(coresSelecionadas.length > 5){
+
+        alert("Selecione no máximo 5 cores.");
+
+        return;
+    }
+
+    const cores =
+        coresSelecionadas.map(
+            item => item.value
+        );
+
+    const prompt = `
+Crie uma proposta original de pintura artesanal em vidro.
+
+Tipo de vidro:
+${vidro}
+
+Flor principal:
+${flor}
+
+Montagem:
+${montagem}
+
+Paleta de cores:
+${cores.join(", ")}
+
+A composição deve ser elegante, harmoniosa e adequada para pintura manual em vidro e cristal.
+
+A proposta deve servir como inspiração para artistas do universo Maria Franco Arte.
+`;
+
+    const resultado =
+        document.getElementById("resultado");
+
+    resultado.style.display = "block";
+
+    resultado.innerHTML =
+        "<h2>Prompt Gerado</h2><pre>" +
+        prompt +
+        "</pre>";
+
+});
+
+</script>
+
+</body>
+</html>
