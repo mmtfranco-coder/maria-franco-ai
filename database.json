@@ -1,0 +1,98 @@
+{
+  "vidros": [
+    {
+      "id": "jarra",
+      "nome": "Jarra"
+    },
+    {
+      "id": "copo",
+      "nome": "Copo"
+    },
+    {
+      "id": "xicara",
+      "nome": "Xícara"
+    },
+    {
+      "id": "boleira",
+      "nome": "Boleira"
+    },
+    {
+      "id": "queijeira",
+      "nome": "Queijeira"
+    }
+  ],
+  "flores": [
+    {
+      "id": "girassol",
+      "nome": "Girassol"
+    },
+    {
+      "id": "lirio",
+      "nome": "Lírio"
+    },
+    {
+      "id": "lavanda",
+      "nome": "Lavanda"
+    },
+    {
+      "id": "orquidea",
+      "nome": "Orquídea"
+    }
+  ],
+  "montagens": [
+    {
+      "id": "espacada",
+      "nome": "Espaçada"
+    },
+    {
+      "id": "media",
+      "nome": "Média"
+    },
+    {
+      "id": "cheia",
+      "nome": "Cheia"
+    }
+  ],
+  "cores": [
+    {
+      "id": "branco",
+      "nome": "Branco"
+    },
+    {
+      "id": "amarelo",
+      "nome": "Amarelo"
+    },
+    {
+      "id": "laranja",
+      "nome": "Laranja"
+    },
+    {
+      "id": "vermelho",
+      "nome": "Vermelho"
+    },
+    {
+      "id": "rosa",
+      "nome": "Rosa"
+    },
+    {
+      "id": "lilas",
+      "nome": "Lilás"
+    },
+    {
+      "id": "roxo",
+      "nome": "Roxo"
+    },
+    {
+      "id": "azul",
+      "nome": "Azul"
+    },
+    {
+      "id": "verde",
+      "nome": "Verde"
+    },
+    {
+      "id": "marrom",
+      "nome": "Marrom"
+    }
+  ]
+}
