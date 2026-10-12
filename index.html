@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Maria Franco Arte - Gerador de Ideias</title>
+
+<style>
+body {
+    font-family: Arial, sans-serif;
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 20px;
+    background-color: #fafafa;
+}
+
+h1 {
+    color: #7a5071;
+}
+
+.card {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+label {
+    display: block;
+    margin-top: 15px;
+    font-weight: bold;
+}
+
+select {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+}
+
+button {
+    margin-top: 20px;
+    background-color: #7a5071;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #603d59;
+}
+
+#resultado {
+    margin-top: 30px;
+    padding: 20px;
+    background: #f5f5f5;
+    border-radius: 8px;
+    display: none;
+    white-space: pre-wrap;
+}
+
+.info {
+    color: #666;
+    font-size: 14px;
+}
+</style>
+
+</head>
+<body>
+
+<div class="card">
+
+    <h1>Maria Franco Arte</h1>
+
+    <p class="info">
+        Selecione as opções abaixo para montar a inspiração da sua pintura.
+    </p>
+
+    <label>Tipo de Vidro</label>
+    <select id="vidro"></select>
+
+    <label>Flor Principal</label>
+    <select id="flor"></select>
+
+    <label>Montagem</label>
+    <select id="montagem"></select>
+
+    <label>Cores (segure CTRL para selecionar várias)</label>
+    <select id="cores" multiple size="10"></select>
+
+    <button onclick="gerarIdeia()">Gerar Ideia</button>
+
+    <div id="resultado"></div>
+
+</div>
+
+<script>
+
+let banco = {};
+
+fetch('./database.json')
+  .then(response => response.json())
+  .then(data => {
+
+      banco = data;
+
+      preencherSelect('vidro', data.vidros);
+      preencherSelect('flor', data.flores);
+      preencherSelect('montagem', data.montagens);
+      preencherSelect('cores', data.cores);
+
+  })
+  .catch(error => {
+
+      console.error(error);
+
+      document.getElementById('resultado').innerHTML =
+      'Erro carregando database.json';
+
+      document.getElementById('resultado').style.display = 'block';
+  });
+
+function preencherSelect(id, lista) {
+
+    const select = document.getElementById(id);
+
+    lista.forEach(item => {
+
+        const option = document.createElement('option');
+
+        option.value = item.id;
+        option.textContent = item.nome;
+
+        select.appendChild(option);
+
+    });
+
+}
+
+function gerarIdeia() {
+
+    const vidro =
+        document.getElementById('vidro').selectedOptions[0].text;
+
+    const flor =
+        document.getElementById('flor').selectedOptions[0].text;
+
