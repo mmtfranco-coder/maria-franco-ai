@@ -39,12 +39,25 @@ select{
     margin-top:5px;
 }
 
+.cores{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:8px;
+    margin-top:10px;
+}
+
+.cor-item{
+    background:#f5f5f5;
+    padding:8px;
+    border-radius:5px;
+}
+
 button{
     margin-top:25px;
     background:#7a5071;
     color:white;
     border:none;
-    padding:12px 18px;
+    padding:12px 20px;
     border-radius:6px;
     cursor:pointer;
 }
@@ -57,17 +70,15 @@ button:hover{
     margin-top:25px;
     padding:20px;
     border-radius:8px;
-    background:#f4f4f4;
+    background:#f5f5f5;
     display:none;
 }
 
 pre{
     white-space:pre-wrap;
-    word-break:break-word;
 }
 
 </style>
-
 </head>
 <body>
 
@@ -76,101 +87,39 @@ pre{
 <h1>Maria Franco Arte</h1>
 
 <p>
-Gerador de ideias para pintura em vidro.
+Gerador de ideias para pintura em vidro e cristal.
 </p>
 
 <label>Tipo de Vidro</label>
 <select id="vidro">
-
-<option value="jarra">Jarra</option>
-<option value="copo">Copo</option>
-<option value="xicara">Xícara</option>
-<option value="boleira">Boleira</option>
-<option value="queijeira">Queijeira</option>
-
+    <option value="Jarra">Jarra</option>
+    <option value="Copo">Copo</option>
+    <option value="Xícara">Xícara</option>
+    <option value="Boleira">Boleira</option>
+    <option value="Queijeira">Queijeira</option>
 </select>
 
 <label>Flor Principal</label>
 <select id="flor">
-
-<option value="girassol">Girassol</option>
-<option value="lirio">Lírio</option>
-<option value="lavanda">Lavanda</option>
-<option value="orquidea">Orquídea</option>
-
+    <option value="Girassol">Girassol</option>
+    <option value="Lírio">Lírio</option>
+    <option value="Lavanda">Lavanda</option>
+    <option value="Orquídea">Orquídea</option>
 </select>
 
 <label>Montagem</label>
 <select id="montagem">
-
-<option value="espacada">Espaçada</option>
-<option value="media">Média</option>
-<option value="cheia">Cheia</option>
-
+    <option value="Espaçada">Espaçada</option>
+    <option value="Média">Média</option>
+    <option value="Cheia">Cheia</option>
 </select>
 
-<label>Cores (até 5)</label>
+<label>Cores (selecione até 5)</label>
 
-<select id="cores" multiple size="10">
+<div class="cores">
 
-<option>Branco</option>
-<option>Amarelo</option>
-<option>Laranja</option>
-<option>Vermelho</option>
-<option>Rosa</option>
-<option>Lilás</option>
-<option>Roxo</option>
-<option>Azul</option>
-<option>Verde</option>
-<option>Marrom</option>
-
-</select>
-
-<button onclick="gerarIdeia()">
-Gerar Ideia
-</button>
-
-<div id="resultado"></div>
-
-</div>
-
-<script>
-
-function gerarIdeia(){
-
-    const vidro =
-        document.getElementById("vidro").value;
-
-    const flor =
-        document.getElementById("flor").value;
-
-    const montagem =
-        document.getElementById("montagem").value;
-
-    const cores =
-        Array.from(
-            document.getElementById("cores").selectedOptions
-        ).map(opcao => opcao.text);
-
-    const prompt = `
-Crie uma proposta de pintura artesanal em vidro.
-
-Tipo de peça:
-${vidro}
-
-Flor principal:
-${flor}
-
-Montagem:
-${montagem}
-
-Paleta de cores:
-${cores.join(", ")}
-
-A pintura deve ser elegante, viável para execução manual em vidro e cristal, inspiradora para uma artesã especializada em pintura decorativa e apresentar uma composição harmoniosa.
-`;
-
-    const resultado =
-        document.getElementById("resultado");
-
-    resultado.style.display = 
+<label class="cor-item"><input type="checkbox" value="Branco"> Branco</label>
+<label class="cor-item"><input type="checkbox" value="Amarelo"> Amarelo</label>
+<label class="cor-item"><input type="checkbox" value="Laranja"> Laranja</label>
+<label class="cor-item"><input type="checkbox" value="Vermelho"> Vermelho</label>
+<label class="cor-item"><input type="checkbox" value="R
